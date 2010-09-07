@@ -1,0 +1,38 @@
+OASISFormat: 0.1
+Name:        ocaml-expect
+Version:     0.0.1
+Synopsis:    Expect-like framework
+Copyright:   2010, OCamlCore SARL 
+Authors:     Sylvain Le Gall
+License:     LGPL-2.1 with OCaml linking exception
+Plugins:     META (0.2.0~alpha1), 
+             StdFiles (0.2.0~alpha1), 
+             DevFiles (0.2.0~alpha1)
+BuildTools:  ocamlbuild
+
+Library expect
+  Path:    src
+  Modules: Expect
+  BuildDepends: unix, str
+  
+Executable test
+  Path:   test
+  MainIs: test.ml
+  BuildDepends: oUnit, expect
+  Install: false
+  
+Executable qa
+  Path:    test
+  MainIs:  qa.ml
+  Install: false
+
+Test main
+  Command: $test
+  
+Document "api-expect"
+  Title:                API reference for Expect
+  Type:                 ocamlbuild (0.1.0)
+  InstallDir:           $htmldir/expect
+  BuildTools+:          ocamldoc
+  XOCamlbuildPath:      src/
+  XOCamlbuildLibraries: expect

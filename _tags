@@ -1,0 +1,17 @@
+# OASIS_START
+# DO NOT EDIT (digest: 5136d085d3bc8dffdbe226ded88d76c1)
+# Library expect
+"src": include
+<src/*.ml{,i}>: pkg_unix
+<src/*.ml{,i}>: pkg_str
+# Executable qa
+# Executable test
+"test/test.byte": use_expect
+"test/test.byte": pkg_unix
+"test/test.byte": pkg_str
+"test/test.byte": pkg_oUnit
+<test/*.ml{,i}>: use_expect
+<test/*.ml{,i}>: pkg_unix
+<test/*.ml{,i}>: pkg_str
+<test/*.ml{,i}>: pkg_oUnit
+# OASIS_STOP

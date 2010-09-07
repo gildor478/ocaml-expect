@@ -1,0 +1,9 @@
+# OASIS_START
+# DO NOT EDIT (digest: c4c5deb7fb99511c92cbad0a65e86e23)
+version = "0.0.1"
+description = "Expect-like framework"
+requires = "unix str"
+archive(byte) = "expect.cma"
+archive(native) = "expect.cmxa"
+# OASIS_STOP
+
