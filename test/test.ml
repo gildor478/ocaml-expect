@@ -31,7 +31,6 @@ let () =
   let with_qa suite f = 
     let _, exit_code = 
       with_spawn  
-        ~verbose:true
         ~timeout:(Some 0.1) "_build/test/qa" [|suite|]
         (fun t () -> f t) ()
     in
