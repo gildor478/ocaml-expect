@@ -2,13 +2,25 @@ OASISFormat: 0.1
 Name:        ocaml-expect
 Version:     0.0.1
 Synopsis:    Expect-like framework
-Copyright:   2010, OCamlCore SARL 
+Copyrights:  (C) 2010 OCamlCore SARL 
 Authors:     Sylvain Le Gall
 License:     LGPL-2.1 with OCaml linking exception
 Plugins:     META (0.2.0~alpha1), 
              StdFiles (0.2.0~alpha1), 
              DevFiles (0.2.0~alpha1)
 BuildTools:  ocamlbuild
+Homepage:    http://forge.ocamlcore.org/projects/ocaml-expect/
+
+Description:
+  This is a simple implementation of `expect` to help building unitary testing
+  of interactive program.
+  .
+  It helps to receive question and send answers from an interactive process.
+  You can match the question using a regular expression (Str). You can also 
+  use a timeout to ensure that the process answer in time.
+  .
+  See the [Expect manual](http://expect.nist.gov/) for more information and 
+  example.
 
 Library expect
   Path:    src
@@ -36,3 +48,8 @@ Document "api-expect"
   BuildTools+:          ocamldoc
   XOCamlbuildPath:      src/
   XOCamlbuildLibraries: expect
+
+SourceRepository head
+  Type: darcs
+  Location: http://darcs.ocamlcore.org/repos/ocaml-expect
+  Browser: http://darcs.ocamlcore.org/cgi-bin/darcsweb.cgi?r=ocaml-expect;a=summary  
