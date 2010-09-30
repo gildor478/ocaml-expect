@@ -44,7 +44,7 @@ Library "expect-str"
 Executable test
   Path:   test
   MainIs: test.ml
-  BuildDepends: oUnit, expect, expect.str, expect.pcre
+  BuildDepends: oUnit, expect, expect.str, expect.pcre, threads
   Install: false
   
 Executable qa

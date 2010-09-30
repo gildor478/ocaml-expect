@@ -26,18 +26,24 @@
 
 open OUnit
 open Expect
+open TestCommon
 
 let () = 
-  let with_qa suite f = 
-    let _, exit_code = 
+  let timeout = 
+    0.1
+  in
+  let with_qa ?(exit_code=Unix.WEXITED 0) suite f = 
+    let _, real_exit_code = 
       with_spawn  
-        ~timeout:(Some 0.1) "_build/test/qa" [|suite|]
+        (* ~verbose:true *)
+        ~timeout:(Some timeout) "_build/test/qa" [|suite|]
         (fun t () -> f t) ()
     in
       assert_equal 
         ~msg:"Exit code"
-        (Unix.WEXITED 0)
+        ~printer:printer_exit_code
         exit_code
+        real_exit_code
   in
 
   let tests = 
@@ -109,6 +115,37 @@ let () =
                    []
                    false);
               send t "test\n"));
+
+      "oasis1-timeout" >::
+      (fun () ->
+         with_qa ~exit_code:(Unix.WEXITED 2) "oasis1"
+           (fun t ->
+              let mtx =
+                Mutex.create ()
+              in
+              let finished = 
+                ref false
+              in
+              let th =
+                Thread.create 
+                  (fun () ->
+                     let _b : bool = 
+                       expect t [`Exact "toto", true] false
+                     in
+                       Mutex.lock mtx;
+                       finished := true;
+                       Mutex.unlock mtx)
+                  ()
+              in
+              let is_finished =
+                Thread.delay (5. *. timeout);
+                Mutex.lock mtx;
+                !finished
+              in
+                Mutex.unlock mtx;
+                if not is_finished then
+                  assert_failure "Process didn't timeout";
+                Thread.join th));
     ]
   in
 

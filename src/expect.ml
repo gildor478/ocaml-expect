@@ -25,8 +25,8 @@ open Unix;;
 type t =
     {
       pid:           int;
-      expect_stdin:  out_channel;
-      expect_stdout: in_channel;
+      expect_stdin:  file_descr;
+      expect_stdout: file_descr;
       timeout:       float option;
       verbose:       bool;
       mutable prev:  string;
@@ -69,6 +69,8 @@ let spawn ?(verbose=false) ?(timeout=Some 10.0) ?env ?(use_stderr=false) prg arg
       stderr
   in
   let pid = 
+    set_close_on_exec self_stdin;
+    set_close_on_exec self_stdout;
     match env with 
       | Some a ->
           create_process_env prg cmd a proc_stdin proc_stdout proc_stderr
@@ -77,14 +79,13 @@ let spawn ?(verbose=false) ?(timeout=Some 10.0) ?env ?(use_stderr=false) prg arg
   in
     close proc_stdout;
     close proc_stdin;
-
     if verbose then
       print_endline command_line;
 
     {
       pid           = pid;
-      expect_stdin  = out_channel_of_descr self_stdin;
-      expect_stdout = in_channel_of_descr self_stdout;
+      expect_stdin  = self_stdin;
+      expect_stdout = self_stdout;
       timeout       = timeout;
       verbose       = verbose;
       prev          = "";
@@ -96,13 +97,15 @@ let set_timeout t timeout =
 ;;
 
 let send t str =
-  if t.verbose then
-    begin
-      print_string str;
-      flush Pervasives.stdout
-    end;
-  output_string t.expect_stdin str;
-  flush t.expect_stdin;
+  let _i : int = 
+    if t.verbose then
+      begin
+        print_string str;
+        flush Pervasives.stdout
+      end;
+    write t.expect_stdin str 0 (String.length str)
+  in
+    ()
 ;;
 
 type expect_event =
@@ -179,7 +182,7 @@ let expect t ?(fmatches=[]) actions action_default =
   let expect_input_line cont = 
     let input_len = 
       try 
-        input t.expect_stdout buff 0 (String.length buff)
+        read t.expect_stdout buff 0 (String.length buff)
       with End_of_file ->
         0
     in
@@ -246,19 +249,16 @@ let expect t ?(fmatches=[]) actions action_default =
     in
       if time_left > 0.0 then
         begin
-          let fd = 
-            Unix.descr_of_in_channel t.expect_stdout
-          in
-            match Unix.select [fd] [] [fd] time_left with 
-              | [], _, [] ->
-                  expect_input_line_timeout 
-                    timeout time_begin
-                  
-              | _ ->
-                  expect_input_line 
-                    (fun () ->
-                       expect_input_line_timeout
-                         timeout time_begin)
+          match Unix.select [t.expect_stdout] [] [] time_left with 
+            | [], _, _ ->
+                expect_input_line_timeout 
+                  timeout time_begin
+                
+            | _ ->
+                expect_input_line 
+                  (fun () ->
+                     expect_input_line_timeout
+                       timeout time_begin)
         end
       else
         begin
@@ -289,9 +289,9 @@ let close t =
     with Unix_error (EINTR, _, _) -> 
       waitpid_non_intr ()
   in
-    close_in t.expect_stdout;
-    close_out t.expect_stdin;
-    snd (waitpid_non_intr ())
+    close t.expect_stdout;
+    close t.expect_stdin;
+    snd (waitpid_non_intr ()) 
 ;;
 
 let with_spawn ?verbose ?timeout ?env ?use_stderr prog args f a =  
