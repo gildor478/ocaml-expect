@@ -1,8 +1,7 @@
 
 open Expect
 
-(* TODO: merge this with expectPcre *)
-let expect t actions action_default =
+let expect t ?fmatches actions action_default =
   let actions = 
     List.map
       (fun (exp, a) ->
@@ -22,5 +21,4 @@ let expect t actions action_default =
            exp, a)
       actions
   in
-    expect t actions action_default
-
+    expect t ?fmatches actions action_default

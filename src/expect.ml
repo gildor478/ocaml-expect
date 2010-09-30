@@ -111,9 +111,34 @@ type expect_event =
   | Line of string
 ;;
 
-let expect t actions action_default =
+let expect t ?(fmatches=[]) actions action_default =
   let buff = 
     String.make 4096 'x'
+  in
+
+  (* Tets if an event can be associated with a fmatch action or continue *)
+  let action_fmatch event cont = 
+    match event with 
+      | Eof | Timeout ->
+          cont ()
+      | Line str ->
+          begin
+            let res = 
+              List.fold_left
+                (fun res f ->
+                   if res = None then
+                     f str
+                   else
+                     res)
+                None
+                fmatches
+            in
+              match res with 
+                | Some e ->
+                    e
+                | None ->
+                    cont ()
+          end
   in
 
   (* Test if an event can be associated with an action or continue *)
@@ -144,7 +169,10 @@ let expect t actions action_default =
           res
       end
     with Not_found ->
-      cont ()
+      (* Nothing match standard action condition, have a look 
+       * to fmatches 
+       *)
+      action_fmatch event cont
   in
 
   (* Read a line from process *)

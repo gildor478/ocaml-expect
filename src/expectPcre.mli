@@ -23,6 +23,7 @@ let (), _ =
 (** See {!Expect.expect}. *)
 val expect :
   Expect.t ->
+  ?fmatches:(string -> 'a option) list ->
   ([<Expect.expect_match 
     | `Pat of string 
     | `Rex of Pcre.regexp] * 'a) list -> 'a -> 'a

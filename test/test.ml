@@ -93,6 +93,22 @@ let () =
                    [`Exact "???name ", true]
                    false);
               send t "test\n"));
+
+      "oasis1-withfmatch" >::
+      (fun () ->
+         with_qa "oasis1"
+           (fun t ->
+              assert_bool
+                "???name "
+                (expect t 
+                   ~fmatches:[(fun str -> 
+                                 if str = "???name " then
+                                   Some true
+                                 else
+                                   None)]
+                   []
+                   false);
+              send t "test\n"));
     ]
   in
 

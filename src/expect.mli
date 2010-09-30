@@ -122,9 +122,17 @@ val set_timeout: t -> float option -> t
   *)
 val send: t -> string -> unit
 
-(** Wait for output of the process and match it against expectation.
+(** [expect t ~fmatches matches dflt] Waits for output of the process and match
+    it against expectations [matches]. If no expectations match at timeout,
+    returns [dflt]. You can use [~fmatch] to define while processing the output
+    what the result is, if you find a match, return [Some res] otherwise return
+    [None].  The function take into account [matches] before [~fmatch] and it
+    picks the first result which is not [None].
   *)
-val expect: t -> (expect_match * 'a) list -> 'a -> 'a
+val expect: 
+  t -> 
+  ?fmatches:(string -> 'a option) list -> 
+  (expect_match * 'a) list -> 'a -> 'a
 
 (** Close the process.
   *)
