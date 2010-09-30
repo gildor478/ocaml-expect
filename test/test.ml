@@ -32,10 +32,11 @@ let () =
   let timeout = 
     0.1
   in
-  let with_qa ?(exit_code=Unix.WEXITED 0) suite f = 
+  let with_qa ?use_stderr ?(exit_code=Unix.WEXITED 0) suite f = 
     let _, real_exit_code = 
       with_spawn  
-        (* ~verbose:true *)
+(*         ~verbose:true  *)
+        ?use_stderr
         ~timeout:(Some timeout) "_build/test/qa" [|suite|]
         (fun t () -> f t) ()
     in
@@ -146,6 +147,15 @@ let () =
                 if not is_finished then
                   assert_failure "Process didn't timeout";
                 Thread.join th));
+      "stderr" >::
+      (fun () ->
+         with_qa ~use_stderr:true "stderr"
+           (fun t ->
+              assert_bool
+                "error"
+                (expect t 
+                   [`Exact "error", true]
+                   false)));
     ]
   in
 

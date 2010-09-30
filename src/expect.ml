@@ -62,15 +62,30 @@ let spawn ?(verbose=false) ?(timeout=Some 10.0) ?env ?(use_stderr=false) prg arg
   let self_stdout, proc_stdout =
     pipe ()
   in
+  let safe_set_close_on_exec fd =
+    try
+      set_close_on_exec fd
+    with _ -> 
+      ()
+  in
   let proc_stderr =
     if use_stderr then
-      proc_stdout
+      begin
+        let fd = 
+          dup proc_stdout
+        in
+          safe_set_close_on_exec fd;
+          fd
+      end
+
     else
-      stderr
+      begin
+        stderr
+      end
   in
   let pid = 
-    set_close_on_exec self_stdin;
-    set_close_on_exec self_stdout;
+    safe_set_close_on_exec self_stdin;
+    safe_set_close_on_exec self_stdout;
     match env with 
       | Some a ->
           create_process_env prg cmd a proc_stdin proc_stdout proc_stderr
@@ -289,8 +304,14 @@ let close t =
     with Unix_error (EINTR, _, _) -> 
       waitpid_non_intr ()
   in
-    close t.expect_stdout;
-    close t.expect_stdin;
+  let safe_close fd = 
+    try 
+      close fd
+    with _ ->
+      ()
+  in
+    safe_close t.expect_stdout;
+    safe_close t.expect_stdin;
     snd (waitpid_non_intr ()) 
 ;;
 

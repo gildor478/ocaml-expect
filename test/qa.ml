@@ -30,10 +30,15 @@ let oasis1 () =
      \n\
      ???name ";
   flush stdout;
-  ignore (read_line ())
+  ignore (
+    try 
+      read_line ()
+    with _ ->
+      exit 2)
 
 let () = 
   match Sys.argv.(1) with
     | "std" -> std ()
     | "oasis1" -> oasis1 ()
+    | "stderr" -> prerr_endline "error"
     | str -> failwith ("Unknown test suite: "^str)
