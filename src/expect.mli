@@ -99,9 +99,20 @@ type expect_match =
 
 (** [spawn prg args] Start a process and monitor its output. Contrary to
     [Unix.create_process], you don't need to repeat the program name at the 
-    beginning of args.
+    beginning of args. 
+  
+    Optional parameters:
+    - [~timeout]: define the default timeout, in seconds. None means that
+      you can wait forever
+    - [~env]: provide environment to run the process
+    - [~use_stderr]: redirect stderr to stdout and process it through expect
   *)
-val spawn: ?verbose:bool -> ?timeout:float option -> string -> string array -> t
+val spawn: 
+      ?verbose:bool -> 
+      ?timeout:float option -> 
+      ?env:string array ->
+      ?use_stderr:bool ->
+      string -> string array -> t
 
 (** Define the timeout for a process.
   *)
@@ -124,5 +135,7 @@ val close: t -> Unix.process_status
 val with_spawn: 
   ?verbose:bool -> 
   ?timeout:float option -> 
+  ?env:string array ->
+  ?use_stderr:bool ->
   string -> string array -> 
   (t -> 'a -> 'a) -> 'a -> 'a * Unix.process_status

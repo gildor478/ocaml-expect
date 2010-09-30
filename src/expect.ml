@@ -24,7 +24,7 @@ open Unix;;
 
 type t =
     {
-      id:            string;
+      pid:           int;
       expect_stdin:  out_channel;
       expect_stdout: in_channel;
       timeout:       float option;
@@ -45,23 +45,46 @@ type expect_match =
     ]
 ;;
 
-let spawn ?(verbose=false) ?(timeout=Some 10.0) prg args =
+let spawn ?(verbose=false) ?(timeout=Some 10.0) ?env ?(use_stderr=false) prg args =
   let command_line =
-    (* TODO: we should escape this string, to keep blank and other
-     * problematic char
-     *)
     String.concat " " (prg :: (Array.to_list args))
   in
-  let (self_stdout, self_stdin) = 
-    open_process command_line
+  let cmd = 
+    Array.init 
+      ((Array.length args) + 1)
+      (function
+         | 0 -> prg
+         | n -> args.(n - 1))
   in
+  let proc_stdin, self_stdin =
+    pipe ()
+  in
+  let self_stdout, proc_stdout =
+    pipe ()
+  in
+  let proc_stderr =
+    if use_stderr then
+      proc_stdout
+    else
+      stderr
+  in
+  let pid = 
+    match env with 
+      | Some a ->
+          create_process_env prg cmd a proc_stdin proc_stdout proc_stderr
+      | None ->
+          create_process prg cmd proc_stdin proc_stdout proc_stderr
+  in
+    close proc_stdout;
+    close proc_stdin;
+
     if verbose then
       print_endline command_line;
 
     {
-      id            = command_line;
-      expect_stdin  = self_stdin;
-      expect_stdout = self_stdout;
+      pid           = pid;
+      expect_stdin  = out_channel_of_descr self_stdin;
+      expect_stdout = in_channel_of_descr self_stdout;
       timeout       = timeout;
       verbose       = verbose;
       prev          = "";
@@ -232,12 +255,20 @@ let expect t actions action_default =
 ;;
 
 let close t =
-  close_process (t.expect_stdout, t.expect_stdin)
+  let rec waitpid_non_intr () =
+    try 
+      waitpid [] t.pid
+    with Unix_error (EINTR, _, _) -> 
+      waitpid_non_intr ()
+  in
+    close_in t.expect_stdout;
+    close_out t.expect_stdin;
+    snd (waitpid_non_intr ())
 ;;
 
-let with_spawn ?verbose ?timeout prog args f a =  
+let with_spawn ?verbose ?timeout ?env ?use_stderr prog args f a =  
   let t = 
-    spawn ?verbose ?timeout prog args
+    spawn ?verbose ?timeout ?env ?use_stderr prog args
   in
     try 
       let res = 
