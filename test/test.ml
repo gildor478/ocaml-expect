@@ -43,14 +43,14 @@ let () =
   let tests = 
     "Expect" >:::
     [
-      "std" >::
+      "std-str" >::
       (fun () -> 
          with_qa "std"
            (fun t ->
               assert_bool
                 "Ask name"
-                (expect t 
-                   [ExpectRegexp 
+                (ExpectStr.expect t 
+                   [`Regexp 
                       (Str.regexp (Str.quote "What's your name? ")), 
                     true]
                    false);
@@ -59,10 +59,28 @@ let () =
 
               assert_bool
                 "Answer hello"
-                (expect t
-                   [ExpectRegexp 
+                (ExpectStr.expect t
+                   [`Regexp 
                       (Str.regexp (Str.quote "Hello Sylvain")),
                     true]
+                   false)));
+
+      "std-pcre" >::
+      (fun () -> 
+         with_qa "std"
+           (fun t ->
+              assert_bool
+                "Ask name"
+                (ExpectPcre.expect t 
+                   [`Pat "What's your name\\? ", true]
+                   false);
+
+              send t "Sylvain\n";
+
+              assert_bool
+                "Answer hello"
+                (ExpectPcre.expect t
+                   [`Pat "Hello Sylvain", true]
                    false)));
 
       "oasis1" >::
@@ -72,7 +90,7 @@ let () =
               assert_bool
                 "???name "
                 (expect t 
-                   [ExpectExact "???name ", true]
+                   [`Exact "???name ", true]
                    false);
               send t "test\n"));
     ]
@@ -83,3 +101,4 @@ let () =
   in
 
     ()
+

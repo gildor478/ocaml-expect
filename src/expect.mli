@@ -54,27 +54,20 @@
 {[
 open Expect
 
-let () = 
-  let ls_prg =
-    spawn "ls" [| "-alh" |]
-  in
-  let find_dot =
-    expect 
-      ls_prg
-      [ ExpectRegexp(Str.regexp "\\."), true ]
-      false
-  in
-  let () = 
-    if find_dot then
-      print_endline "'.' found"
+let (), exit_code = 
+  with_spawn "ls" [|"-alh"|]
+  (fun t () ->
+    if expect t [`Exact ".", true] false then
+      prerr_endline "'.' found"
     else
-      print_endline "'.' not found"
-  in
-    match close ls_prg with
-    | Unix.WEXITED 0 ->
-        print_endline "Exit normal"
-    | _ ->
-        print_endline "Problem when exiting"
+      prerr_endline "'.' not found")
+  ()
+in
+  match exit_code with
+  | Unix.WEXITED 0 ->
+      print_endline "Exit normal"
+  | _ ->
+      print_endline "Problem when exiting"
 ]}
    
     See {{:http://directory.fsf.org/project/expect/}Expect manual}
@@ -90,12 +83,13 @@ type t
     (i.e. \n).
   *)
 type expect_match =
-    ExpectEof                     (* Look for EOF *)
-  | ExpectRegexp of Str.regexp    (* Look for a line matching the regexp *)
-  | ExpectFun of (string -> bool) (* Look for a line matching the string *)
-  | ExpectExact of string         (* Look for a line matching exactly this 
-                                     string *)
-  | ExpectTimeout                 (* Wait timeout *)
+    [
+        `Eof                     (* Look for EOF *)
+      | `Fun of (string -> bool) (* Look for a line matching the string *)
+      | `Exact of string         (* Look for a line matching exactly this 
+                                    string *)
+      | `Timeout                 (* Wait timeout *)
+    ]
 
 (** [spawn prg args] Start a process and monitor its output. Contrary to
     [Unix.create_process], you don't need to repeat the program name at the 

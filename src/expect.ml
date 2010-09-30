@@ -27,7 +27,6 @@ type t =
       id:            string;
       expect_stdin:  out_channel;
       expect_stdout: in_channel;
-      expect_stderr: in_channel;
       timeout:       float option;
       verbose:       bool;
       mutable prev:  string;
@@ -35,11 +34,12 @@ type t =
 ;;
 
 type expect_match =
-  | ExpectEof
-  | ExpectRegexp of Str.regexp
-  | ExpectFun of (string -> bool)
-  | ExpectExact of string
-  | ExpectTimeout 
+    [
+        `Eof
+      | `Fun of (string -> bool)
+      | `Exact of string
+      | `Timeout 
+    ]
 ;;
 
 let spawn ?(verbose=false) ?(timeout=Some 10.0) prg args =
@@ -49,10 +49,8 @@ let spawn ?(verbose=false) ?(timeout=Some 10.0) prg args =
      *)
     String.concat " " (prg :: (Array.to_list args))
   in
-  let (self_stdout, self_stdin, self_stderr) = 
-    open_process_full
-      command_line
-      [||]
+  let (self_stdout, self_stdin) = 
+    open_process command_line
   in
     if verbose then
       print_endline command_line;
@@ -61,7 +59,6 @@ let spawn ?(verbose=false) ?(timeout=Some 10.0) prg args =
       id            = command_line;
       expect_stdin  = self_stdin;
       expect_stdout = self_stdout;
-      expect_stderr = self_stderr;
       timeout       = timeout;
       verbose       = verbose;
       prev          = "";
@@ -101,20 +98,12 @@ let expect t actions action_default =
           List.find 
             (fun (action_condition, _) ->
                 match event, action_condition with
-                  | Eof, ExpectEof
-                  | Timeout, ExpectTimeout ->
+                  | Eof, `Eof
+                  | Timeout, `Timeout ->
                       true
-                  | Line str, ExpectRegexp regexp ->
-                      (
-                        try
-                          ignore(Str.search_forward regexp str 0);
-                          true
-                        with Not_found ->
-                          false
-                      )
-                  | Line str, ExpectFun f ->
+                  | Line str, `Fun f ->
                       f str
-                  | Line str, ExpectExact s ->
+                  | Line str, `Exact s ->
                       str = s
                   | _ ->
                       false)
@@ -249,12 +238,7 @@ let expect t actions action_default =
 ;;
 
 let close t =
-  close_process_full 
-    (
-      t.expect_stdout,
-      t.expect_stdin,
-      t.expect_stderr
-    )
+  close_process (t.expect_stdout, t.expect_stdin)
 ;;
 
 let with_spawn ?verbose ?timeout prog args f a =  

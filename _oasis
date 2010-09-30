@@ -1,6 +1,6 @@
 OASISFormat: 0.1
 Name:        ocaml-expect
-Version:     0.0.1
+Version:     0.0.2
 Synopsis:    Expect-like framework
 Copyrights:  (C) 2010 OCamlCore SARL 
 Authors:     Sylvain Le Gall
@@ -25,12 +25,26 @@ Description:
 Library expect
   Path:    src
   Modules: Expect
-  BuildDepends: unix, str
+  BuildDepends: unix
+
+Library "expect-pcre"
+  Path: src
+  Modules: ExpectPcre
+  BuildDepends: expect, pcre
+  FindlibParent: expect
+  FindlibName: pcre
+
+Library "expect-str"
+  Path: src
+  Modules: ExpectStr
+  BuildDepends: expect, str
+  FindlibParent: expect
+  FindlibName: str
   
 Executable test
   Path:   test
   MainIs: test.ml
-  BuildDepends: oUnit, expect
+  BuildDepends: oUnit, expect, expect.str, expect.pcre
   Install: false
   
 Executable qa
@@ -47,7 +61,7 @@ Document "api-expect"
   InstallDir:           $htmldir/expect
   BuildTools+:          ocamldoc
   XOCamlbuildPath:      src/
-  XOCamlbuildLibraries: expect
+  XOCamlbuildLibraries: expect, expect.pcre, expect.str
 
 SourceRepository head
   Type: darcs
