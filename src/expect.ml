@@ -38,6 +38,9 @@ type expect_match =
         `Eof
       | `Fun of (string -> bool)
       | `Exact of string
+      | `Prefix of string
+      | `Suffix of string
+      | `Contains of string
       | `Timeout 
     ]
 ;;
@@ -105,6 +108,12 @@ let expect t actions action_default =
                       f str
                   | Line str, `Exact s ->
                       str = s
+                  | Line str, `Suffix suff ->
+                      ExtString.String.ends_with str suff
+                  | Line str, `Prefix pre ->
+                      ExtString.String.starts_with str pre
+                  | Line str, `Contains sub ->
+                      ExtString.String.exists str sub
                   | _ ->
                       false)
             actions

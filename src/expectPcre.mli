@@ -23,10 +23,6 @@ let (), _ =
 (** See {!Expect.expect}. *)
 val expect :
   Expect.t ->
-  ([< `Eof
-    | `Exact of string
-    | `Fun of string -> bool
-    | `Pat of string
-    | `Rex of Pcre.regexp
-    | `Timeout ] *
-   'a) list -> 'a -> 'a
+  ([<Expect.expect_match 
+    | `Pat of string 
+    | `Rex of Pcre.regexp] * 'a) list -> 'a -> 'a

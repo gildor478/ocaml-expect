@@ -21,9 +21,5 @@ let (), _ =
 (** See {!Expect.expect}. *)
 val expect :
   Expect.t ->
-  ([< `Eof
-    | `Exact of string
-    | `Fun of string -> bool
-    | `Regexp of Str.regexp
-    | `Timeout ] *
-   'a) list -> 'a -> 'a
+  ([<Expect.expect_match 
+    | `Regexp of Str.regexp] * 'a) list -> 'a -> 'a

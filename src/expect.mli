@@ -84,10 +84,16 @@ type t
   *)
 type expect_match =
     [
-        `Eof                     (* Look for EOF *)
-      | `Fun of (string -> bool) (* Look for a line matching the string *)
-      | `Exact of string         (* Look for a line matching exactly this 
-                                    string *)
+        `Eof                     (** Look for EOF *)
+      | `Fun of (string -> bool) (** Look for a line matching the string *)
+      | `Exact of string         (** Look for a line matching exactly this 
+                                     string *)
+      | `Suffix of string        (** Look for a line ending with this 
+                                     string *)
+      | `Prefix of string        (** Look for a line starting with this 
+                                     string *)
+      | `Contains of string      (** Look for a line containing this
+                                     string *)
       | `Timeout                 (* Wait timeout *)
     ]
 

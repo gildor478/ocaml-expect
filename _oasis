@@ -25,7 +25,7 @@ Description:
 Library expect
   Path:    src
   Modules: Expect
-  BuildDepends: unix
+  BuildDepends: unix, extlib
 
 Library "expect-pcre"
   Path: src
