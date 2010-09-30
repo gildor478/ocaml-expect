@@ -158,22 +158,7 @@ let expect t actions action_default =
     in
 
     let lines = 
-      let rec lines_aux str = 
-        try 
-          let str_len = String.length str in
-          let pos_nl = String.index str '\n' in
-          let hd = String.sub str 0 (pos_nl + 1) in
-          let tl = 
-            if (pos_nl + 1) < str_len then
-              String.sub str (pos_nl + 1) (str_len - (pos_nl + 1))
-            else
-              ""
-          in
-            hd :: (lines_aux tl)
-        with Not_found ->
-          [str]
-      in
-        lines_aux (t.prev ^ input_str)
+      ExtString.String.nsplit (t.prev ^ input_str) "\n"
     in
 
     let rec scan_lines =
