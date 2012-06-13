@@ -36,3 +36,5 @@
 <test/*.ml{,i}>: pkg_str
 <test/*.ml{,i}>: pkg_oUnit
 # OASIS_STOP
+"build": not_hygienic
+"build": -traverse
