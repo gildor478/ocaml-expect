@@ -20,11 +20,35 @@
 ################################################################################
 
 # OASIS_START
-# DO NOT EDIT (digest: c4c5deb7fb99511c92cbad0a65e86e23)
-version = "0.0.1"
+# DO NOT EDIT (digest: 15b68c43659be916ef45e0c61924f5d9)
+version = "0.0.3"
 description = "Expect-like framework"
-requires = "unix str"
+requires = "unix extlib"
 archive(byte) = "expect.cma"
+archive(byte, plugin) = "expect.cma"
 archive(native) = "expect.cmxa"
+archive(native, plugin) = "expect.cmxs"
+exists_if = "expect.cma"
+package "str" (
+ version = "0.0.3"
+ description = "Expect-like framework"
+ requires = "expect str"
+ archive(byte) = "expect-str.cma"
+ archive(byte, plugin) = "expect-str.cma"
+ archive(native) = "expect-str.cmxa"
+ archive(native, plugin) = "expect-str.cmxs"
+ exists_if = "expect-str.cma"
+)
+
+package "pcre" (
+ version = "0.0.3"
+ description = "Expect-like framework"
+ requires = "expect pcre"
+ archive(byte) = "expect-pcre.cma"
+ archive(byte, plugin) = "expect-pcre.cma"
+ archive(native) = "expect-pcre.cmxa"
+ archive(native, plugin) = "expect-pcre.cmxs"
+ exists_if = "expect-pcre.cma"
+)
 # OASIS_STOP
 

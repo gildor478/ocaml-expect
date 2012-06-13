@@ -1,13 +1,12 @@
-OASISFormat: 0.1
+OASISFormat: 0.2
 Name:        ocaml-expect
-Version:     0.0.2
+Version:     0.0.3
 Synopsis:    Expect-like framework
 Copyrights:  (C) 2010 OCamlCore SARL 
 Authors:     Sylvain Le Gall
 License:     LGPL-2.1 with OCaml linking exception
-Plugins:     META (0.2.0~alpha1), 
-             StdFiles (0.2.0~alpha1), 
-             DevFiles (0.2.0~alpha1)
+LicenseFile: COPYING.txt
+Plugins:     META (0.2), StdFiles (0.2), DevFiles (0.2)
 BuildTools:  ocamlbuild
 Homepage:    http://forge.ocamlcore.org/projects/ocaml-expect/
 

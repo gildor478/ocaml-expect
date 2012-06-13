@@ -20,6 +20,8 @@
 ################################################################################
 
 # OASIS_START
-# DO NOT EDIT (digest: 7f036407d75c774176a7effbe959366b)
+# DO NOT EDIT (digest: c5b6133139cb5fd8b91aebee6760d8e9)
 Expect
+ExpectPcre
+ExpectStr
 # OASIS_STOP
