@@ -1,3 +1,9 @@
+2012-06-14 Sylvain Le Gall
+  
+  * Version 0.0.3
+  * Regenerate setup.ml with oasis v0.3.0~rc6
+  * Fix test to use qa.byte
+
 2010-09-30 Sylvain Le Gall
 
   * Version 0.0.2
