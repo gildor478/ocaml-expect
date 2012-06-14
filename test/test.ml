@@ -37,7 +37,7 @@ let () =
       with_spawn  
 (*         ~verbose:true  *)
         ?use_stderr
-        ~timeout:(Some timeout) "_build/test/qa" [|suite|]
+        ~timeout:(Some timeout) "_build/test/qa.byte" [|suite|]
         (fun t () -> f t) ()
     in
       assert_equal 

@@ -19,6 +19,9 @@
 #  Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA               #
 ################################################################################
 
+#TESTFLAGS += -only-test Expect:5:stderr
+#TESTFLAGS += -verbose
+
 default: test 
 #TESTFLAGS=-verbose
 
