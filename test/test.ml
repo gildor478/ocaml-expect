@@ -1,26 +1,26 @@
-(********************************************************************************)
-(*  ocaml-expect: Expect-like framework for OCaml                               *)
-(*                                                                              *)
-(*  Copyright (C) 2010, OCamlCore SARL                                          *)
-(*                                                                              *)
-(*  This library is free software; you can redistribute it and/or modify it     *)
-(*  under the terms of the GNU Lesser General Public License as published by    *)
-(*  the Free Software Foundation; either version 2.1 of the License, or (at     *)
-(*  your option) any later version, with the OCaml static compilation           *)
-(*  exception.                                                                  *)
-(*                                                                              *)
-(*  This library is distributed in the hope that it will be useful, but         *)
-(*  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY  *)
-(*  or FITNESS FOR A PARTICULAR PURPOSE. See the file COPYING for more          *)
-(*  details.                                                                    *)
-(*                                                                              *)
-(*  You should have received a copy of the GNU Lesser General Public License    *)
-(*  along with this library; if not, write to the Free Software Foundation,     *)
-(*  Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA               *)
-(********************************************************************************)
+(******************************************************************************)
+(* ocaml-expect: Expect-like framework for OCaml                              *)
+(*                                                                            *)
+(* Copyright (C) 2010, OCamlCore SARL                                         *)
+(*                                                                            *)
+(* This library is free software; you can redistribute it and/or modify it    *)
+(* under the terms of the GNU Lesser General Public License as published by   *)
+(* the Free Software Foundation; either version 2.1 of the License, or (at    *)
+(* your option) any later version, with the OCaml static compilation          *)
+(* exception.                                                                 *)
+(*                                                                            *)
+(* This library is distributed in the hope that it will be useful, but        *)
+(* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY *)
+(* or FITNESS FOR A PARTICULAR PURPOSE. See the file COPYING for more         *)
+(* details.                                                                   *)
+(*                                                                            *)
+(* You should have received a copy of the GNU Lesser General Public License   *)
+(* along with this library; if not, write to the Free Software Foundation,    *)
+(* Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA              *)
+(******************************************************************************)
 
 
-(** Run tests for Expect 
+(** Run tests for Expect
     @author Sylvain Le Gall
   *)
 
@@ -28,37 +28,37 @@ open OUnit
 open Expect
 open TestCommon
 
-let () = 
-  let timeout = 
+let () =
+  let timeout =
     0.1
   in
-  let with_qa ?use_stderr ?(exit_code=Unix.WEXITED 0) suite f = 
-    let _, real_exit_code = 
-      with_spawn  
+  let with_qa ?use_stderr ?(exit_code=Unix.WEXITED 0) suite f =
+    let _, real_exit_code =
+      with_spawn
 (*         ~verbose:true  *)
         ?use_stderr
         ~timeout:(Some timeout) "_build/test/qa.byte" [|suite|]
         (fun t () -> f t) ()
     in
-      assert_equal 
+      assert_equal
         ~msg:"Exit code"
         ~printer:printer_exit_code
         exit_code
         real_exit_code
   in
 
-  let tests = 
+  let tests =
     "Expect" >:::
     [
       "std-str" >::
-      (fun () -> 
+      (fun () ->
          with_qa "std"
            (fun t ->
               assert_bool
                 "Ask name"
-                (ExpectStr.expect t 
-                   [`Regexp 
-                      (Str.regexp (Str.quote "What's your name? ")), 
+                (ExpectStr.expect t
+                   [`Regexp
+                      (Str.regexp (Str.quote "What's your name? ")),
                     true]
                    false);
 
@@ -67,18 +67,18 @@ let () =
               assert_bool
                 "Answer hello"
                 (ExpectStr.expect t
-                   [`Regexp 
+                   [`Regexp
                       (Str.regexp (Str.quote "Hello Sylvain")),
                     true]
                    false)));
 
       "std-pcre" >::
-      (fun () -> 
+      (fun () ->
          with_qa "std"
            (fun t ->
               assert_bool
                 "Ask name"
-                (ExpectPcre.expect t 
+                (ExpectPcre.expect t
                    [`Pat "What's your name\\? ", true]
                    false);
 
@@ -96,7 +96,7 @@ let () =
            (fun t ->
               assert_bool
                 "???name "
-                (expect t 
+                (expect t
                    [`Exact "???name ", true]
                    false);
               send t "test\n"));
@@ -107,8 +107,8 @@ let () =
            (fun t ->
               assert_bool
                 "???name "
-                (expect t 
-                   ~fmatches:[(fun str -> 
+                (expect t
+                   ~fmatches:[(fun str ->
                                  if str = "???name " then
                                    Some true
                                  else
@@ -124,13 +124,13 @@ let () =
               let mtx =
                 Mutex.create ()
               in
-              let finished = 
+              let finished =
                 ref false
               in
               let th =
-                Thread.create 
+                Thread.create
                   (fun () ->
-                     let _b : bool = 
+                     let _b : bool =
                        expect t [`Exact "toto", true] false
                      in
                        Mutex.lock mtx;
@@ -153,7 +153,7 @@ let () =
            (fun t ->
               assert_bool
                 "error"
-                (expect t 
+                (expect t
                    [`Exact "error", true]
                    false)));
     ]
