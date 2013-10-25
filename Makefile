@@ -19,12 +19,6 @@
 #  Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA               #
 ################################################################################
 
-#TESTFLAGS += -only-test Expect:5:stderr
-#TESTFLAGS += -verbose
-
-default: test 
-#TESTFLAGS=-verbose
-
 # OASIS_START
 # DO NOT EDIT (digest: bc1e05bfc8b39b664f29dae8dbd3ebbb)
 
@@ -63,10 +57,3 @@ setup.data:
 .PHONY: build doc test all install uninstall reinstall clean distclean configure
 
 # OASIS_STOP
-
-headache:
-	find ./ -name _darcs -prune -false -o -name _build -prune \
-	  -false -o -type f \
-	  | xargs headache -h _header -c _headache.config
-
-.PHONY: headache
