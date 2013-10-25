@@ -43,7 +43,7 @@ Library "expect-str"
 Executable test
   Path:   test
   MainIs: test.ml
-  BuildDepends: oUnit, expect, expect.str, expect.pcre, threads
+  BuildDepends: oUnit (>= 2.0.0), expect, expect.str, expect.pcre, threads
   Install: false
   Build$: flag(tests)
 
