@@ -1,3 +1,9 @@
+2012-10-26 Sylvain Le Gall
+
+  * Version 0.0.4
+  * Adapt function to allow verbose output (OUnit2 improvement)
+  * Cleanup
+
 2012-06-14 Sylvain Le Gall
 
   * Version 0.0.3
