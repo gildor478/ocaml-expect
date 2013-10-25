@@ -108,11 +108,12 @@ type expect_match =
     - [~use_stderr]: redirect stderr to stdout and process it through expect
   *)
 val spawn: 
-      ?verbose:bool -> 
-      ?timeout:float option -> 
-      ?env:string array ->
-      ?use_stderr:bool ->
-      string -> string array -> t
+  ?verbose:bool -> 
+  ?verbose_output:(string -> unit) ->
+  ?timeout:float option -> 
+  ?env:string array ->
+  ?use_stderr:bool ->
+  string -> string array -> t
 
 (** Define the timeout for a process.
   *)
@@ -142,6 +143,7 @@ val close: t -> Unix.process_status
   *)
 val with_spawn: 
   ?verbose:bool -> 
+  ?verbose_output:(string -> unit) ->
   ?timeout:float option -> 
   ?env:string array ->
   ?use_stderr:bool ->

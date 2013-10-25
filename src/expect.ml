@@ -24,12 +24,12 @@ open Unix;;
 
 type t =
     {
-      pid:           int;
-      expect_stdin:  file_descr;
-      expect_stdout: file_descr;
-      timeout:       float option;
-      verbose:       bool;
-      mutable prev:  string;
+      pid:            int;
+      expect_stdin:   file_descr;
+      expect_stdout:  file_descr;
+      timeout:        float option;
+      verbose:        string -> unit;
+      mutable prev:   string;
     }
 ;;
 
@@ -45,7 +45,14 @@ type expect_match =
     ]
 ;;
 
-let spawn ?(verbose=false) ?(timeout=Some 10.0) ?env ?(use_stderr=false) prg args =
+let default_verbose_output =
+  print_endline
+
+let spawn ?(verbose=false)
+          ?(verbose_output=default_verbose_output)
+          ?(timeout=Some 10.0)
+          ?env
+          ?(use_stderr=false) prg args =
   let command_line =
     String.concat " " (prg :: (Array.to_list args))
   in
@@ -92,10 +99,13 @@ let spawn ?(verbose=false) ?(timeout=Some 10.0) ?env ?(use_stderr=false) prg arg
       | None ->
           create_process prg cmd proc_stdin proc_stdout proc_stderr
   in
+  let verbose str =
+    if verbose then
+      verbose_output str
+  in
     close proc_stdout;
     close proc_stdin;
-    if verbose then
-      print_endline command_line;
+    verbose ("Command line: "^command_line);
 
     {
       pid           = pid;
@@ -113,11 +123,7 @@ let set_timeout t timeout =
 
 let send t str =
   let _i : int = 
-    if t.verbose then
-      begin
-        print_string str;
-        flush Pervasives.stdout
-      end;
+    t.verbose (Printf.sprintf "Send: %S" str);
     write t.expect_stdin str 0 (String.length str)
   in
     ()
@@ -175,11 +181,11 @@ let expect t ?(fmatches=[]) actions action_default =
                   | Line str, `Exact s ->
                       str = s
                   | Line str, `Suffix suff ->
-                      ExtString.String.ends_with str suff
+                      BatString.ends_with str suff
                   | Line str, `Prefix pre ->
-                      ExtString.String.starts_with str pre
+                      BatString.starts_with str pre
                   | Line str, `Contains sub ->
-                      ExtString.String.exists str sub
+                      BatString.exists str sub
                   | _ ->
                       false)
             actions
@@ -198,7 +204,8 @@ let expect t ?(fmatches=[]) actions action_default =
     let input_len = 
       try 
         read t.expect_stdout buff 0 (String.length buff)
-      with End_of_file ->
+      with End_of_file
+        | Unix_error(EPIPE, "read", _) ->
         0
     in
 
@@ -207,11 +214,7 @@ let expect t ?(fmatches=[]) actions action_default =
     in
 
     let () = 
-      if t.verbose then
-        begin
-          print_string input_str;
-          flush Pervasives.stdout 
-        end
+      t.verbose (Printf.sprintf "Receive: %S" input_str);
     in
 
     (* Modify continuation if we reach the end of the stream *)
@@ -227,7 +230,7 @@ let expect t ?(fmatches=[]) actions action_default =
     in
 
     let lines = 
-      ExtString.String.nsplit (t.prev ^ input_str) "\n"
+      BatString.nsplit (t.prev ^ input_str) "\n"
     in
 
     let rec scan_lines =
@@ -315,9 +318,9 @@ let close t =
     snd (waitpid_non_intr ()) 
 ;;
 
-let with_spawn ?verbose ?timeout ?env ?use_stderr prog args f a =  
+let with_spawn ?verbose ?verbose_output ?timeout ?env ?use_stderr prog args f a =  
   let t = 
-    spawn ?verbose ?timeout ?env ?use_stderr prog args
+    spawn ?verbose ?verbose_output ?timeout ?env ?use_stderr prog args
   in
     try 
       let res = 
