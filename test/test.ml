@@ -30,13 +30,16 @@ open TestCommon
 
 let timeout = 0.1
 
+let qa = Conf.make_exec "qa"
+
+
 let with_qa test_ctxt ?use_stderr ?(exit_code=Unix.WEXITED 0) suite f =
   let _, real_exit_code =
     with_spawn
       ~verbose:true
       ~verbose_output:(logf test_ctxt `Info "%s")
       ?use_stderr
-      ~timeout:(Some timeout) "_build/test/qa.byte" [|suite|]
+      ~timeout:(Some timeout) (qa test_ctxt) [|suite|]
       (fun t () -> f t) ()
   in
     assert_equal
