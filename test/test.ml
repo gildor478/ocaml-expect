@@ -158,6 +158,32 @@ let tests =
               (expect t
                  [`Exact "error", true]
                  false)));
+
+    "exit" >::
+    (fun test_ctxt ->
+       with_qa test_ctxt "exit"
+         (fun t ->
+            assert_bool
+              "eof"
+              (expect t
+                 [`Eof, true]
+                 true)));
+
+    "non-existing" >::
+    (fun test_ctxt ->
+       let _, real_exit_code =
+         with_spawn
+           ~verbose:true
+           ~verbose_output:(logf test_ctxt `Info "%s")
+           ("blahblah") [||]
+           (fun t () -> ())
+           ()
+       in
+       assert_equal
+         ~msg:"Exit code"
+         ~printer:printer_exit_code
+         (Unix.WEXITED 127)
+         real_exit_code);
   ]
 
 let () = run_test_tt_main tests

@@ -1,4 +1,10 @@
-2012-10-26 Sylvain Le Gall
+2014-02-10 Sylvain Le Gall
+  
+  * Version 0.0.5
+  * Be more verbose about end of file
+  * Improve handling of "Broken pipe"
+
+2013-10-26 Sylvain Le Gall
 
   * Version 0.0.4
   * Adapt function to allow verbose output (OUnit2 improvement)

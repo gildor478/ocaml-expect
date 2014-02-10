@@ -43,4 +43,5 @@ let () =
     | "std" -> std ()
     | "oasis1" -> oasis1 ()
     | "stderr" -> prerr_endline "error"
+    | "exit" -> exit 0
     | str -> failwith ("Unknown test suite: "^str)
