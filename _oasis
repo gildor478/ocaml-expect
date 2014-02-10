@@ -1,6 +1,6 @@
 OASISFormat: 0.3
 Name:        ocaml-expect
-Version: 0.0.5
+Version: 0.0.6
 Synopsis:    Expect-like framework
 Copyrights:  (C) 2010 OCamlCore SARL
 Authors:     Sylvain Le Gall
