@@ -1,5 +1,10 @@
+2017-12-31 Sylvain Le Gall
+
+  * Version 0.0.6
+  * Fix compatibility issues with OCaml 4.06.0.
+
 2014-02-10 Sylvain Le Gall
-  
+
   * Version 0.0.5
   * Be more verbose about end of file
   * Improve handling of "Broken pipe"
