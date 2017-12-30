@@ -1,0 +1,10 @@
+S src/**
+S test/**
+B _build/src/**
+B _build/test/**
+PKG unix
+PKG pcre
+PKG str
+PKG oUnit
+PKG batteries
+FLG -w +a-4-44
