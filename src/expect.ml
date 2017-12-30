@@ -130,7 +130,7 @@ let set_timeout t timeout =
 let send t str =
   let _i : int =
     t.verbose (Printf.sprintf "Send: %S" str);
-    write t.expect_stdin str 0 (String.length str)
+    write t.expect_stdin (Bytes.of_string str) 0 (String.length str)
   in
     ()
 
@@ -142,9 +142,7 @@ type expect_event =
 
 
 let expect t ?(fmatches=[]) actions action_default =
-  let buff =
-    String.make 4096 'x'
-  in
+  let buff = Bytes.make 4096 'x' in
 
   (* Test if an event can be associated with a fmatch action or continue *)
   let action_fmatch event cont =
@@ -209,21 +207,21 @@ let expect t ?(fmatches=[]) actions action_default =
   let expect_input_line cont =
     let input_len =
       try
-        read t.expect_stdout buff 0 (String.length buff)
+        read t.expect_stdout buff 0 (Bytes.length buff)
       with End_of_file
-        | Unix_error(EPIPE, "read", _)
-        | Sys_error("Broken pipe") ->
+        | Unix_error(EPIPE, _, _)
+        | Sys_error _ ->
         0
     in
 
     if input_len = 0 then begin
       (* Nothing to process anymore *)
-      t.verbose "Receive end of file.";
+      t.verbose "Received end of file.";
       action_match Eof (fun () -> action_default)
     end else begin
-      let input_str = String.sub buff 0 input_len in
-      t.verbose (Printf.sprintf "Receive: %S" input_str);
-      let lines = BatString.nsplit (t.prev ^ input_str) "\n" in
+      let input_str = Bytes.sub_string buff 0 input_len in
+      t.verbose (Printf.sprintf "Received: %S" input_str);
+      let lines = BatString.nsplit ~by:"\n" (t.prev ^ input_str)  in
       let rec scan_lines =
         function
           | [ln] when

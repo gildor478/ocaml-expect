@@ -24,7 +24,7 @@ Description:
 Library expect
   Path:    src
   Modules: Expect
-  BuildDepends: unix, batteries
+  BuildDepends: unix, batteries, bytes
 
 Library "expect-pcre"
   Path: src
