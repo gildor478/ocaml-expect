@@ -111,7 +111,7 @@ headache:
 # Deploy target
 #  Deploy/release the software.
 
-deploy: headache fix-perms
+deploy: fix-perms
 	# TODO: create a plugin to create documentation.
 	# oasis doc-dist
 	admin-gallu-deploy --verbose \
