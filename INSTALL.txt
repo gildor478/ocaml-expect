@@ -12,7 +12,7 @@ In order to compile this package, you will need:
 * ocaml for all, test main, doc api-expect
 * findlib
 * extlib for library expect
-* pcre for library expect-pcre
+* re for library expect-pcre
 * oUnit for executable test
 
 Installing
