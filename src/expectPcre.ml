@@ -31,9 +31,10 @@ let expect t ?fmatches actions action_default =
              | #expect_match as x ->
                  x
              | `Rex rex ->
-                 `Fun (fun s -> Pcre.pmatch ~rex s)
+                 `Fun (fun s -> Re.Pcre.pmatch ~rex s)
              | `Pat pat ->
-                 `Fun (fun s -> Pcre.pmatch ~pat s)
+                 let rex = Re.Pcre.regexp pat in
+                 `Fun (fun s -> Re.Pcre.pmatch ~rex s)
          in
            exp, a)
       actions
