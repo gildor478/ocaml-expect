@@ -29,7 +29,7 @@ Library expect
 Library "expect-pcre"
   Path: src
   Modules: ExpectPcre
-  BuildDepends: expect, pcre
+  BuildDepends: expect, re
   FindlibParent: expect
   FindlibName: pcre
 

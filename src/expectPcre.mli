@@ -48,4 +48,4 @@ val expect :
   ?fmatches:(string -> 'a option) list ->
   ([<Expect.expect_match
     | `Pat of string
-    | `Rex of Pcre.regexp] * 'a) list -> 'a -> 'a
+    | `Rex of Re.Pcre.regexp] * 'a) list -> 'a -> 'a
