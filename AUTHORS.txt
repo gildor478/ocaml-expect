@@ -1,5 +1,0 @@
-(* OASIS_START *)
-(* DO NOT EDIT (digest: 6a9ee0f74d731d4f98cc2a708c53e485) *)
-Authors of ocaml-expect
-Sylvain Le Gall
-(* OASIS_STOP *)
