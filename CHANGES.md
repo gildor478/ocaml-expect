@@ -1,3 +1,10 @@
+## v0.1.0 - 2025-01-03
+
+  * Replace ocaml-pcre by ocaml-re. The reason is that pcre-ocaml depends on an
+    [obsolete library](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1000004) on
+    Debian. (thhanks to glondu@)
+  * Migrate build system to dune.
+
 ## v0.0.6 - 2017-12-31
 
   * Version 0.0.6
