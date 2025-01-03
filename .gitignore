@@ -1,6 +1,4 @@
-/_build/
-/setup.data
-/setup.log
 /dist/
-/test.byte
-/qa.byte
+.merlin
+/*.install
+/_build

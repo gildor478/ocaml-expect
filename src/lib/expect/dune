@@ -1,0 +1,5 @@
+(library
+  (name Expect)
+  (public_name expect)
+  (libraries unix batteries bytes))
+

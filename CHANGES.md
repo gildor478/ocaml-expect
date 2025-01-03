@@ -1,27 +1,27 @@
-2017-12-31 Sylvain Le Gall
+## v0.0.6 - 2017-12-31
 
   * Version 0.0.6
   * Fix compatibility issues with OCaml 4.06.0.
 
-2014-02-10 Sylvain Le Gall
+## v0.0.5 - 2014-02-10
 
   * Version 0.0.5
   * Be more verbose about end of file
   * Improve handling of "Broken pipe"
 
-2013-10-26 Sylvain Le Gall
+## v0.0.4 - 2013-10-26
 
   * Version 0.0.4
   * Adapt function to allow verbose output (OUnit2 improvement)
   * Cleanup
 
-2012-06-14 Sylvain Le Gall
+## v0.0.3 - 2012-06-14
 
   * Version 0.0.3
   * Regenerate setup.ml with oasis v0.3.0~rc6
   * Fix test to use qa.byte
 
-2010-09-30 Sylvain Le Gall
+## v0.0.2 - 2010-09-30
 
   * Version 0.0.2
   * Add a ~fmatch to expect, to dynamically define expect results
@@ -30,6 +30,6 @@
   * Separate Str, add Pcre, create findlib packages expect.str and
     expect.pcre
 
-2010-09-07 Sylvain Le Gall
+## v0.0.1 - 2010-09-07
 
   * Initial version 0.0.1

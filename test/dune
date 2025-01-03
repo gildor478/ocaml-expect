@@ -1,0 +1,10 @@
+(executable
+  (name qa)
+  (modules Qa))
+
+(test
+  (name test)
+  (modules test TestCommon)
+  (deps qa.exe)
+  (libraries ounit2 expect expect.str expect.pcre threads)
+  (action (run %{test} -qa ./qa.exe)))

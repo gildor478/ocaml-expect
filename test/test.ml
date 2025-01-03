@@ -171,19 +171,23 @@ let tests =
 
     "non-existing" >::
     (fun test_ctxt ->
-       let _, real_exit_code =
-         with_spawn
-           ~verbose:true
-           ~verbose_output:(logf test_ctxt `Info "%s")
-           ("blahblah") [||]
-           (fun t () -> ())
-           ()
-       in
-       assert_equal
-         ~msg:"Exit code"
-         ~printer:printer_exit_code
-         (Unix.WEXITED 127)
-         real_exit_code);
+      try
+        let _, real_exit_code =
+          with_spawn
+            ~verbose:true
+            ~verbose_output:(logf test_ctxt `Info "%s")
+            ("blahblah") [||]
+            (fun _ () -> ())
+            ()
+        in
+          assert_equal
+            ~msg:"Exit code"
+            ~printer:printer_exit_code
+            (Unix.WEXITED 127)
+            real_exit_code
+      with Unix.Unix_error(Unix.ENOENT, _, _) ->
+        (* OCaml >5.0 is return ENOENT rather than WEXITED 127 *)
+        ())
   ]
 
 let () = run_test_tt_main tests

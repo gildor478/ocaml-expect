@@ -221,7 +221,7 @@ let expect t ?(fmatches=[]) actions action_default =
     end else begin
       let input_str = Bytes.sub_string buff 0 input_len in
       t.verbose (Printf.sprintf "Received: %S" input_str);
-      let lines = BatString.nsplit ~by:"\n" (t.prev ^ input_str)  in
+      let lines = BatString.split_on_string ~by:"\n" (t.prev ^ input_str) in
       let rec scan_lines =
         function
           | [ln] when
