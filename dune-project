@@ -23,5 +23,6 @@
   (depends
     base-unix
     (re (>= 1.12.0))
+    (batteries (>= 3.8.0))
     (ounit2 (and (>= 2.0.0) :with-test))
     (ocaml (>= 4.14))))
