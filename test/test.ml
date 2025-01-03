@@ -151,13 +151,14 @@ let tests =
 
     "stderr" >::
     (fun test_ctxt ->
-       with_qa test_ctxt ~use_stderr:true "stderr"
-         (fun t ->
-            assert_bool
-              "error"
-              (expect t
-                 [`Exact "error", true]
-                 false)));
+      skip_if (Sys.os_type = "Win32") "Don't work on Windows";
+      with_qa test_ctxt ~use_stderr:true "stderr"
+      (fun t ->
+        assert_bool
+        "error"
+        (expect t
+        [`Exact "error", true]
+        false)));
 
     "exit" >::
     (fun test_ctxt ->
